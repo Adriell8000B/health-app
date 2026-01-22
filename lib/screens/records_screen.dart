@@ -1,34 +1,29 @@
 import 'package:flutter/material.dart';
+import '../models/exam_model.dart';
+import '../services/api_service.dart';
 
-class RecordsScreen extends StatelessWidget {
+class RecordsScreen extends StatefulWidget {
   const RecordsScreen({super.key});
 
   @override
+  State<RecordsScreen> createState() => _RecordsScreenState();
+}
+
+class _RecordsScreenState extends State<RecordsScreen> {
+  final ApiService apiService = ApiService();
+  late Future<List<ExamRecord>> examsFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    examsFuture = apiService.getExams(); 
+  }
+
+  @override
   Widget build(BuildContext context) {
-    // Detect if the app is in dark mode
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
 
-    // This is where your API data will eventually go
-    final List<Map<String, String>> exams = [
-      {
-        "title": "Blood Count Test",
-        "hospital": "Central Hospital • Room 302",
-        "time": "Today, 08:30 AM"
-      },
-      {
-        "title": "Chest X-Ray",
-        "hospital": "Diagnostic Center • 2nd Floor",
-        "time": "Friday, 10:00 AM"
-      },
-      {
-        "title": "General Checkup",
-        "hospital": "Family Clinic • Wing A",
-        "time": "Feb 12, 09:00 AM"
-      },
-    ];
-
     return Scaffold(
-      // Subtle background color difference for a clean look
       backgroundColor: isDark ? const Color(0xFF18191D) : const Color(0xFFF8F9FA),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -53,7 +48,6 @@ class RecordsScreen extends StatelessWidget {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Section Header
           Padding(
             padding: const EdgeInsets.only(left: 20, top: 20, bottom: 10),
             child: Text(
@@ -66,18 +60,31 @@ class RecordsScreen extends StatelessWidget {
               ),
             ),
           ),
-          // Dynamic List
           Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              itemCount: exams.length,
-              itemBuilder: (context, index) {
-                final exam = exams[index];
-                return _buildExamBubble(
-                  isDark,
-                  title: exam["title"]!,
-                  subtitle: exam["hospital"]!,
-                  time: exam["time"]!,
+            child: FutureBuilder<List<ExamRecord>>(
+              future: examsFuture,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  return Center(child: Text("Error: ${snapshot.error}"));
+                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  return const Center(child: Text("No exams scheduled"));
+                }
+
+                final exams = snapshot.data!;
+                return ListView.builder(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  itemCount: exams.length,
+                  itemBuilder: (context, index) {
+                    final exam = exams[index];
+                    return _buildExamBubble(
+                      isDark,
+                      title: exam.title,
+                      subtitle: exam.location,
+                      time: exam.date,
+                    );
+                  },
                 );
               },
             ),
@@ -96,15 +103,11 @@ class RecordsScreen extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       child: Material(
-        // Material wrapper provides the Inkwell ripple effect
         color: isDark ? const Color(0xFF24262C) : Colors.white,
         borderRadius: BorderRadius.circular(24),
         clipBehavior: Clip.antiAlias,
         child: InkWell(
-          onTap: () {
-            // Action when the user taps the exam bubble
-            print("Tapped on $title");
-          },
+          onTap: () {},
           child: Container(
             width: double.infinity,
             padding: const EdgeInsets.all(20),
@@ -134,7 +137,6 @@ class RecordsScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 16),
-                // Time "Pill" Tag
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(

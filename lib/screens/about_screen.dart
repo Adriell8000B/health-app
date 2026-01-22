@@ -96,7 +96,7 @@ class AboutScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         border: isDark ? null : Border.all(color: Colors.grey[200]!),
         boxShadow: isDark ? [] : [
-          BoxShadow(color: Colors.black.withOpacity(0.03), blurRadius: 10, offset: const Offset(0, 4))
+          BoxShadow(color: Colors.black.withValues(alpha: 0.03), blurRadius: 10, offset: const Offset(0, 4))
         ],
       ),
       child: Row(
@@ -114,7 +114,7 @@ class AboutScreen extends StatelessWidget {
       height: 50,
       width: 50,
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Icon(icon, color: color, size: 24),
