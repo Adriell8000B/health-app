@@ -80,9 +80,9 @@ class _RecordsScreenState extends State<RecordsScreen> {
                     final exam = exams[index];
                     return _buildExamBubble(
                       isDark,
-                      title: exam.title,
-                      subtitle: exam.location,
-                      time: exam.date,
+                      title: exam.examType,
+                      subtitle: exam.examLocation,
+                      time: exam.examDate,
                     );
                   },
                 );

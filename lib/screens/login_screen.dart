@@ -16,7 +16,6 @@ class _LoginScreenState extends State<LoginScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
-  // Integrated Sign-In/Sign-Up Logic
   Future<void> _handleLogin() async {
     if (!_formKey.currentState!.validate()) return;
 
@@ -26,13 +25,11 @@ class _LoginScreenState extends State<LoginScreen> {
     final String password = _passwordController.text.trim();
 
     try {
-      // 1. Attempt to sign in
       await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
     } on FirebaseAuthException catch (e) {
-      // 2. If user doesn't exist, create the account automatically
       if (e.code == 'user-not-found' || e.code == 'invalid-credential') {
         try {
           await FirebaseAuth.instance.createUserWithEmailAndPassword(

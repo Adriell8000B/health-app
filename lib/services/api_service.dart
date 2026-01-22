@@ -4,22 +4,42 @@ import 'package:http/http.dart' as http;
 import '../models/exam_model.dart';
 
 class ApiService {
-  // Use 10.0.2.2 for Android Emulator, localhost for iOS/Web
   static final String baseUrl = Platform.isAndroid
-      ? 'http://10.0.2.2:18080'
+      ? 'https://health-api-0sv7.onrender.com'
       : 'http://localhost:18080';
 
   Future<List<ExamRecord>> getExams() async {
     final response = await http.get(
-      Uri.parse('https://jsonplaceholder.typicode.com/posts'),
+      Uri.parse('$baseUrl/exams'),
     );
 
     if (response.statusCode == 200) {
       List<dynamic> body = jsonDecode(response.body);
-      // Take only the first 10 items so the list isn't too long
-      return body.take(10).map((item) => ExamRecord.fromJson(item)).toList();
+      return body.map((item) => ExamRecord.fromJson(item)).toList();
     } else {
       throw Exception('Failed to load data');
+    }
+  }
+
+  Future<bool> addExam(Map<String, dynamic> data) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$baseUrl/exams/add'),
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: jsonEncode(data),
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return true;
+      } else {
+        print("Server error: ${response.statusCode}");
+        return false;
+      }
+    } catch (e) {
+      print("Connection error: $e");
+      return false;
     }
   }
 }
