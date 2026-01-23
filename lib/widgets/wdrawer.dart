@@ -17,7 +17,9 @@ class WDrawer extends StatelessWidget {
           children: [
             UserAccountsDrawerHeader(
               decoration: BoxDecoration(
-                color: isDark ? const Color(0xF724262C) : const Color(0xFFF0F4F8),
+                color: isDark
+                    ? const Color(0xF724262C)
+                    : const Color(0xFFF0F4F8),
               ),
               currentAccountPicture: const CircleAvatar(
                 backgroundColor: Color(0xFF1976D2),
@@ -36,19 +38,12 @@ class WDrawer extends StatelessWidget {
               accountEmail: Text(
                 user?.email ?? "No email found",
                 style: TextStyle(
-                  color: isDark ? Colors.grey : Colors.black54, 
-                  fontSize: 13
+                  color: isDark ? Colors.grey : Colors.black54,
+                  fontSize: 13,
                 ),
               ),
             ),
 
-            _buildDrawerItem(
-              context,
-              icon: Icons.login,
-              title: "Login",
-              route: "/login",
-              isDark: isDark,
-            ),
             _buildDrawerItem(
               context,
               icon: Icons.medical_services,
@@ -84,24 +79,16 @@ class WDrawer extends StatelessWidget {
               route: "/about",
               isDark: isDark,
             ),
-            
+
             Divider(color: isDark ? Colors.white10 : Colors.black12),
-            
-            ListTile(
-              leading: const Icon(Icons.logout, color: Colors.redAccent),
-              title: const Text("Logout", style: TextStyle(color: Colors.redAccent)),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.pushReplacementNamed(context, "/login");
-              },
-            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildDrawerItem(BuildContext context, {
+  Widget _buildDrawerItem(
+    BuildContext context, {
     required IconData icon,
     required String title,
     required String route,
@@ -110,8 +97,8 @@ class WDrawer extends StatelessWidget {
     return ListTile(
       leading: Icon(icon, color: const Color(0xFF1976D2)),
       title: Text(
-        title, 
-        style: TextStyle(color: isDark ? Colors.white : Colors.black87)
+        title,
+        style: TextStyle(color: isDark ? Colors.white : Colors.black87),
       ),
       onTap: () {
         Navigator.pop(context);
@@ -119,4 +106,4 @@ class WDrawer extends StatelessWidget {
       },
     );
   }
-} 
+}
